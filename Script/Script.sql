@@ -74,7 +74,54 @@ CREATE TABLE ClientRecomendClient (
 */
 CREATE PROCEDURE getClientRecomendClient AS
 BEGIN
-SELECT * FROM ClientRecomendClient;
+SELECT idClientRecomendClient, dbo.getClientName(idRecomend) AS Recomend,
+dbo.getClientName(idClient) AS Client , dbo.getClientIdentification(idClient) AS Identification
+ FROM dbo.ClientRecomendClient;
+END;
+
+/**
+ * DDL Command
+ * Description: The next command create the function get the name of te client.
+ * Author: Danny Xie Li
+ * Created: 26/05/18
+ * Last modification: 26/05/18
+*/
+CREATE FUNCTION getClientName(@pId AS INT) 
+RETURNS VARCHAR(250)
+AS BEGIN 
+	DECLARE @name VARCHAR(20)
+	SET @name = (SELECT Client.idClient FROM Client WHERE Client.idClient = @pId)
+	RETURN @name
+END;
+
+/**
+ * DDL Command
+ * Description: The next command create the function get the identification of the client.
+ * Author: Danny Xie Li
+ * Created: 26/05/18
+ * Last modification: 26/05/18
+*/
+CREATE FUNCTION getClientIdentification(@pId AS INT) 
+RETURNS INT
+AS BEGIN 
+	DECLARE @identification INT
+	SET @identification = (SELECT Client.identification FROM Client WHERE Client.idClient = @pId)
+	RETURN @identification
+END;
+
+/**
+ * DDL Command
+ * Description: The next command create the function get the id of the client.
+ * Author: Danny Xie Li
+ * Created: 26/05/18
+ * Last modification: 26/05/18
+*/
+CREATE FUNCTION getClientId(@pIdentification AS INT) 
+RETURNS INT
+AS BEGIN 
+	DECLARE @id INT
+	SET @id = (SELECT Client.idClient FROM Client WHERE Client.identification = @pIdentification)
+	RETURN @id
 END;
 
 /**
@@ -84,10 +131,10 @@ END;
  * Created: 21/05/18
  * Last modification: 21/05/18
 */
-CREATE PROCEDURE insertClientRecomendClient(@pIdRecomend INT, @pIdClient INT)
+CREATE PROCEDURE insertClientRecomendClient(@pIdentRecomend INT, @pIdentClient INT)
 AS BEGIN
 INSERT INTO dbo.ClientRecomendClient(idRecomend, idClient)
-VALUES(@pIdRecomend, @pIdClient);
+VALUES(dbo.getClientId(@pIdentRecomend), dbo.getClientId(@pIdentClient));
 END;
 
 /**
@@ -242,6 +289,7 @@ lastname, identification, dateOfBirth)
 VALUES(@pBonus, @pFirstname, @pLastname, @pIdentification, @pDate);
 END;
 
+EXEC dbo.insertClient( 'Carlos', 'Espinoza', 11525,'2008-01-08',0);
 /**
  * DDL Command
  * Description: The next command create the procedure deleteClient delete data in client
@@ -297,7 +345,7 @@ END;
 CREATE PROCEDURE insertClientRecomendClient(@pNewClient INT, @pRecommend INT)
 AS BEGIN
 INSERT INTO dbo.ClientRecomendClient(idRecomend, idClient)
-VALUES(@pNewClient, @pNewClient);
+VALUES(@pNewClient, @pRecommend);
 END;
 
 /**
