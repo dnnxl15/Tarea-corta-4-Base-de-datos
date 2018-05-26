@@ -67,6 +67,44 @@ CREATE TABLE ClientRecomendClient (
 
 /**
  * DDL Command
+ * Description: The next command create the procedure get the data from ClientRecomendClient.
+ * Author: Danny Xie Li
+ * Created: 21/05/18
+ * Last modification: 21/05/18
+*/
+CREATE PROCEDURE getClientRecomendClient AS
+BEGIN
+SELECT * FROM ClientRecomendClient;
+END;
+
+/**
+ * DDL Command
+ * Description: The next command insert a new Client friend.
+ * Author: Danny Xie Li
+ * Created: 21/05/18
+ * Last modification: 21/05/18
+*/
+CREATE PROCEDURE insertClientRecomendClient(@pIdRecomend INT, @pIdClient INT)
+AS BEGIN
+INSERT INTO dbo.ClientRecomendClient(idRecomend, idClient)
+VALUES(@pIdRecomend, @pIdClient);
+END;
+
+/**
+ * DDL Command
+ * Description: The next command delete a Client friend.
+ * Author: Danny Xie Li
+ * Created: 21/05/18
+ * Last modification: 21/05/18
+*/
+CREATE PROCEDURE deleteClientRecomendClient(@pIdClientRecomendClient INT) AS
+BEGIN
+DELETE FROM ClientRecomendClient  
+WHERE idClientRecomendClient  = @pIdClientRecomendClient
+END;
+
+/**
+ * DDL Command
  * Description: The next command create the procedure insertAdministrator insert into administrator.
  * Author: Danny Xie Li
  * Created: 21/05/18
