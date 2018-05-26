@@ -94,7 +94,7 @@ END;
  * DDL Command
  * Description: The next command delete a Client friend.
  * Author: Danny Xie Li
- * Created: 21/05/18
+ * Created: 25/05/18
  * Last modification: 21/05/18
 */
 CREATE PROCEDURE deleteClientRecomendClient(@pIdClientRecomendClient INT) AS
@@ -107,7 +107,7 @@ END;
  * DDL Command
  * Description: The next command create the procedure insertAdministrator insert into administrator.
  * Author: Danny Xie Li
- * Created: 21/05/18
+ * Created: 25/05/18
  * Last modification: 21/05/18
 */
 CREATE PROCEDURE insertAdministrator(@pUsername VARCHAR(100), @pPassword VARCHAR(100), @pFirstname VARCHAR(100),
@@ -124,7 +124,7 @@ EXEC dbo.insertAdministrator 'Charlie', 'Charlie', 'Carlos', 'Gonzalez', 1236547
  * DDL Command
  * Description: The next command create the procedure getAdministrator get data from administrator.
  * Author: Danny Xie Li
- * Created: 21/05/18
+ * Created: 25/05/18
  * Last modification: 21/05/18
 */
 CREATE PROCEDURE getAdministrator AS
