@@ -241,7 +241,7 @@ GO
 Description: Create RestBuyMaterial Table
 Creation date: 24/05/2018
 Created by: Esteban Coto Alfaro
-Last Modification: 24/05/2018
+Last Modification: 29/05/2018
 */
 SET ANSI_NULLS ON
 GO
@@ -250,12 +250,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[RestBuyMaterial](
-	[idRestaurant] [int] NULL,
 	[idMaterial] [int] NULL,
-	[measure] [varchar](50) NULL,
+	[idRestaurant] [int] NULL,
+	[measure] [varchar](max) NULL,
 	[mount] [int] NULL,
-	[price] [int] NULL
-) ON [PRIMARY]
+	[price] [int] NULL,
+	[dateOfBuy] [timestamp] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
 ALTER TABLE [dbo].[RestBuyMaterial]  WITH CHECK ADD  CONSTRAINT [FK_RestBuyMaterial_Material] FOREIGN KEY([idMaterial])
@@ -1213,5 +1214,42 @@ BEGIN
 	WHERE Restaurant.code = @pCode
 
 	RETURN @pIdRestaurant
+END
+GO
+
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- TRIGGERS
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Description: Trigger to update in the RestStorageMaterial Table
+-- Author: Esteban Coto Alfaro
+-- Creation Date: 29/05/2018
+-- Last Modification: 29/05/2018
+-- =============================================
+CREATE TRIGGER afterInsertRestBuyMaterial
+	ON  [dbo].[RestBuyMaterial] 
+   AFTER INSERT
+AS 
+BEGIN
+	DECLARE @pRestID int
+	DECLARE @pMaterialID int
+	SET @pMaterialID = (SELECT TOP 1 idMaterial FROM [dbo].[RestBuyMaterial] ORDER BY dateOfBuy DESC)
+	SET @pRestID = (SELECT TOP 1 idRestaurant FROM [dbo].[RestBuyMaterial] ORDER BY dateOfBuy DESC)
+
+	IF (SELECT count(*) FROM [dbo].[RestBuyMaterial] WHERE @pMaterialID = [dbo].[RestBuyMaterial].idMaterial AND
+															@pRestID = [dbo].[RestBuyMaterial].idRestaurant) > 1 
+		BEGIN
+			UPDATE TOP (1) [dbo].[RestStorageMaterial]
+			SET [dbo].[RestStorageMaterial].mount = [dbo].[RestStorageMaterial].mount + (SELECT TOP 1 mount FROM [dbo].[RestBuyMaterial] ORDER BY dateOfBuy DESC)
+			WHERE @pMaterialID = (SELECT TOP 1 idMaterial FROM [dbo].[RestBuyMaterial] ORDER BY dateOfBuy DESC) AND
+			@pRestID = (SELECT TOP 1 idRestaurant FROM [dbo].[RestBuyMaterial] ORDER BY dateOfBuy DESC)
+		END
+	ELSE 
+		INSERT INTO [dbo].[RestStorageMaterial]([idMaterial], [idRestaurant], [mount])
+		VALUES((SELECT idMaterial FROM INSERTED), (SELECT idRestaurant FROM INSERTED), (SELECT mount FROM INSERTED))
 END
 GO
