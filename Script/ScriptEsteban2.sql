@@ -262,7 +262,7 @@ GO
 -- Creation Date: 29/05/2018
 -- Last Modification: 29/05/2018
 -- =============================================
-CREATE PROCEDURE [dbo].[insertProductByRest]
+CREATE PROCEDURE [dbo].[insertProductByCombo]
 (
 	@pComboCode VARCHAR(50),
 	@pProductName VARCHAR(50)
